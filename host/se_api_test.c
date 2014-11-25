@@ -71,8 +71,9 @@ int main(int argc, char *argv[])
 	res = TEEC_InvokeCommand(&sess, CMD_SELF_TESTS, &op,
 				 &err_origin);
 	if (res != TEEC_SUCCESS)
-		errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
-			res, err_origin);
+		printf("failed\n");
+	else
+		printf("success\n");
 
 	/*
 	 * We're done with the TA, close the session and
