@@ -24,20 +24,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TA_SE_API_TEST_H
-#define TA_SE_API_TEST_H
 
-/* This UUID is generated with uuidgen
-   the ITU-T UUID generator at http://www.itu.int/ITU-T/asn1/uuid.html */
-#define TA_SE_API_TEST_UUID \
-		{ 0xAEB79790, 0x6F03, 0x11E5,  \
-			{ 0x98, 0x03, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x67 } }
+#include <tee_internal_api.h>
+#include <tee_internal_api_extensions.h>
 
-#define TA_SE_API_SELF_TEST_UUID \
-		{ 0xAEB79790, 0x6F03, 0x11E4,  \
-			{ 0x98, 0x03, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66 } }
+#include "util.h"
 
-/* The TAFs ID implemented in this TA */
-#define CMD_SELF_TESTS	0
+#define DUMP_BUF_MAX		128
 
-#endif /*TA_HELLO_WORLD_H*/
+char *print_buf(char *buf, size_t *remain_size, const char *fmt, ...)
+{
+	va_list ap;
+	size_t len;
+
+	va_start(ap, fmt);
+	len = vsnprintf(buf, *remain_size, fmt, ap);
+	buf += len;
+	*remain_size -= len;
+	va_end(ap);
+	return buf;
+}
+
+void dump_hex(char *buf, size_t *remain_size, uint8_t *input_buf,
+		size_t input_size)
+{
+	size_t i;
+
+	for (i = 0; i < input_size; i++)
+		buf = print_buf(buf, remain_size, "%02X ", input_buf[i]);
+}
+
+void print_hex(uint8_t *input_buf, size_t input_size)
+{
+	char buf[DUMP_BUF_MAX];
+	size_t remain = sizeof(buf);
+
+	dump_hex(buf, &remain, input_buf, input_size);
+	DMSG("%s", buf);
+}

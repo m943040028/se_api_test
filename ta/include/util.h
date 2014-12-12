@@ -24,20 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TA_SE_API_TEST_H
-#define TA_SE_API_TEST_H
+#ifndef _UTIL_H_
+#define _UTIL_H_
 
-/* This UUID is generated with uuidgen
-   the ITU-T UUID generator at http://www.itu.int/ITU-T/asn1/uuid.html */
-#define TA_SE_API_TEST_UUID \
-		{ 0xAEB79790, 0x6F03, 0x11E5,  \
-			{ 0x98, 0x03, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x67 } }
+#include <stdio.h>
+#include <stdint.h>
 
-#define TA_SE_API_SELF_TEST_UUID \
-		{ 0xAEB79790, 0x6F03, 0x11E4,  \
-			{ 0x98, 0x03, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66 } }
+char *print_buf(char *buf, size_t *remain_size, const char *fmt, ...)
+	__attribute__((__format__(__printf__, 3, 4)));
 
-/* The TAFs ID implemented in this TA */
-#define CMD_SELF_TESTS	0
+void dump_hex(char *buf, size_t *remain_size, uint8_t *input_buf,
+		size_t input_size);
 
-#endif /*TA_HELLO_WORLD_H*/
+void print_hex(uint8_t *input_buf, size_t input_size);
+
+#endif

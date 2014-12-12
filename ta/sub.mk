@@ -1,2 +1,2 @@
 global-incdirs-y += include
-srcs-y += se_api_test_ta.c
+srcs-y += se_api_test_ta.c util.c

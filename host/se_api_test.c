@@ -25,7 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include <err.h>
 #include <tee_client_api.h>
 #include <ta_se_api_test.h>
@@ -36,19 +39,40 @@ int main(int argc, char *argv[])
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = TA_SE_API_TEST_UUID;
+	TEEC_UUID uuid_ta = TA_SE_API_TEST_UUID;
+	TEEC_UUID uuid_sta = TA_SE_API_SELF_TEST_UUID;
+	TEEC_UUID *uuid;
 	uint32_t err_origin;
+	bool self_test = false;
+	int c;
+
+	while ((c = getopt(argc, argv, "s")) != -1)
+	{
+		switch (c)
+		{
+		case 's':
+			self_test = true;
+			break;
+		case '?':
+			exit(1);
+		}
+	}
 
 	/* Initialize a context connecting us to the TEE */
 	res = TEEC_InitializeContext(NULL, &ctx);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_InitializeContext failed with code 0x%x", res);
 
+	if (self_test)
+		uuid = &uuid_sta;
+	else
+		uuid = &uuid_ta;
+
 	/*
 	 * Open a session to the "hello world" TA, the TA will print "hello
 	 * world!" in the log when the session is created.
 	 */
-	res = TEEC_OpenSession(&ctx, &sess, &uuid,
+	res = TEEC_OpenSession(&ctx, &sess, uuid,
 			       TEEC_LOGIN_PUBLIC, NULL, NULL, &err_origin);
 	if (res != TEEC_SUCCESS)
 		errx(1, "TEEC_Opensession failed with code 0x%x origin 0x%x",
